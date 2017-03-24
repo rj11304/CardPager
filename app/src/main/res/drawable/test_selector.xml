@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_hovered="false">
+        <color android:color="@android:color/transparent"/>
+    </item>
+    <item android:state_hovered="true">
+        <shape android:shape="oval">
+            <gradient android:startColor="@android:color/transparent"
+                android:endColor="#86ffffff"
+                android:type="radial"
+                android:gradientRadius="110%"/>
+            <padding android:bottom="5dp"
+                android:left="5dp"
+                android:right="5dp"
+                android:top="5dp"/>
+        </shape>
+    </item>
+
+</selector>
