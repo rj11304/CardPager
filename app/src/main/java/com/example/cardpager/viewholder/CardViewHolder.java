@@ -17,12 +17,19 @@ public class CardViewHolder extends RecyclerView.ViewHolder implements OnViewHol
 
     public CardViewHolder(View itemView, int parentWidth, int parentHeight) {
         super(itemView);
-        img = (ImageView) itemView;
-        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(parentWidth/2,parentHeight/2);
-        params.leftMargin = parentWidth/40;
-        params.rightMargin = parentWidth/40;
-        params.topMargin = parentHeight/4;
-        params.bottomMargin = parentHeight/4;
+        RecyclerView.LayoutParams params;
+        if(itemView instanceof ImageView){
+            img = (ImageView) itemView;
+            params = new RecyclerView.LayoutParams(parentWidth/2,parentHeight/2);
+            params.leftMargin = parentWidth/40;
+            params.rightMargin = parentWidth/40;
+            params.topMargin = parentHeight/4;
+            params.bottomMargin = parentHeight/4;
+        }else{
+            params = new RecyclerView.LayoutParams(parentWidth/2-parentWidth/40,parentHeight/2);
+            params.topMargin = parentHeight/4;
+            params.bottomMargin = parentHeight/4;
+        }
         itemView.setLayoutParams(params);
     }
 

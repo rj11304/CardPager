@@ -34,7 +34,7 @@ public class CardPagertManager {
         transaction.add(R.id.fragment,fragment,fragment.getInfo().UUID);
         transaction.commit();
         showFragment = fragment;
-        if(callBack != null) callBack.showFragment();
+        if(callBack != null) callBack.showFragment(fragment);
     }
 
     public void openFragment(CardBaseFragment fragment){
@@ -45,7 +45,7 @@ public class CardPagertManager {
         transaction.show(fragment);
         transaction.commit();
         showFragment = fragment;
-        if(callBack != null) callBack.showFragment();
+        if(callBack != null) callBack.showFragment(fragment);
     }
 
     public void removeFragment(CardBaseFragment fragment){
@@ -76,7 +76,7 @@ public class CardPagertManager {
     }
 
     public interface CallBack{
-        public void showFragment();
+        public void showFragment(CardBaseFragment fragment);
         public void backhome();
     }
 

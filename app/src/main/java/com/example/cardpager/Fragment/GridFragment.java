@@ -13,8 +13,8 @@ import android.widget.Toast;
 import com.example.cardpager.R;
 import com.example.cardpager.adapter.GridRecyclerViewAdapter;
 import com.example.cardpager.helper.DragEvent;
+import com.example.cardpager.helper.NotePadItemToucherHelperCallback;
 import com.example.cardpager.helper.RecyclerViewItemClickHelper;
-import com.example.cardpager.helper.SimpleItemTouchHelperCallback;
 import com.example.cardpager.info.GridItemInfo;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class GridFragment extends CardBaseFragment {
         GridLayoutManager layoutManager = new GridLayoutManager(inflater.getContext(),3);
         recyclerView.setLayoutManager(layoutManager);
         GridRecyclerViewAdapter adapter = new GridRecyclerViewAdapter(strList);
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(event);
+        ItemTouchHelper.Callback callback = new NotePadItemToucherHelperCallback(event);
         itemTouchHelper = new ItemTouchHelper(callback);
         RecyclerViewItemClickHelper helper = new RecyclerViewItemClickHelper(itemClickcallBack);
         itemTouchHelper.attachToRecyclerView(recyclerView);

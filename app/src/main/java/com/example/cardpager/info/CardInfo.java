@@ -1,6 +1,7 @@
 package com.example.cardpager.info;
 
 import android.graphics.Bitmap;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.cardpager.Fragment.CardBaseFragment;
 
@@ -13,5 +14,6 @@ public class CardInfo {
     public String UUID;
     public Bitmap bitmap;
     public CardBaseFragment fragment;
+    public RecyclerView.ViewHolder myHolder;
 
 }

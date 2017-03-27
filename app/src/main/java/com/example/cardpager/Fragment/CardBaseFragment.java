@@ -2,13 +2,11 @@ package com.example.cardpager.Fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.view.animation.AnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 
-import com.example.cardpager.R;
 import com.example.cardpager.event.CardPagerEvent;
 import com.example.cardpager.info.CardInfo;
 
@@ -34,25 +32,29 @@ public class CardBaseFragment extends Fragment{
 
     @Override
     public void onHiddenChanged(final boolean hidden) {
-        if(hidden){
-            new AsyncTask<String,String,String>(){
-                @Override
-                protected String doInBackground(String... params) {//这里可能要经常调用，用AsyncTask对线程管理比较好
-                    if(hidden){
-                        Bitmap bitmap = info.bitmap;
-                        info.bitmap = getBitmapCache();
-                        EventBus.getDefault().post(new CardPagerEvent(info.UUID));
-                    }
-                    return null;
-                }
-            }.execute();
-        }
-        if(hidden){
-            getView().setAnimation(AnimationUtils.loadAnimation(getView().getContext(), R.anim.in_fragment));
-        }else{
-            getView().setAnimation(AnimationUtils.loadAnimation(getView().getContext(), R.anim.out_fragment));
+        getView().setAnimation(getAnimation(hidden));
+        if(hidden){//这里可能要经常调用，用AsyncTask对线程管理比较好
+            info.bitmap = getBitmapCache();
+            EventBus.getDefault().post(new CardPagerEvent(info.UUID));
         }
         super.onHiddenChanged(hidden);
+    }
+
+    public Animation getAnimation(boolean hidden){
+        float pivotx;
+        if(info.myHolder == null){
+            pivotx = 1f;
+        }else{
+            pivotx = info.myHolder.itemView.getLeft()*2f/getView().getWidth();
+        }
+        Animation animation;
+        if(hidden){
+            animation = new ScaleAnimation(1f,0.5f,1f,0.5f,Animation.RELATIVE_TO_SELF,pivotx,Animation.RELATIVE_TO_SELF,0.5f);
+        }else{
+            animation = new ScaleAnimation(0.5f,1f,0.5f,1f,Animation.RELATIVE_TO_SELF,pivotx,Animation.RELATIVE_TO_SELF,0.5f);
+        }
+        animation.setDuration(300);
+        return animation;
     }
 
     //提取当前页面截图
@@ -60,9 +62,8 @@ public class CardBaseFragment extends Fragment{
         View v = getView();
         int width = v.getWidth();
         int height = v.getHeight();
-        Bitmap cache = Bitmap.createBitmap(width,height, Bitmap.Config.RGB_565);
-        Canvas canvas = new Canvas(cache);
-        v.draw(canvas);
+        v.setDrawingCacheEnabled(true);
+        Bitmap cache = v.getDrawingCache();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         cache.compress(Bitmap.CompressFormat.JPEG,50,stream);
         byte[] bt = stream.toByteArray();

@@ -37,7 +37,6 @@ public class MeshMenuTouchHelper {
         switch(event.getAction()){
             case MotionEvent.ACTION_UP:
                 callBack.resetEvent();
-                stopDrag();
                 int x = (int)MotionEventCompat.getX(event,0);
                 int y = (int)MotionEventCompat.getY(event,0);
                 if(meshMenusView.getManager() == null) break;
@@ -46,6 +45,7 @@ public class MeshMenuTouchHelper {
                     if(v != null)
                         callBack.onItemSelected(v);
                 }
+                stopDrag();
         }
         return gestureDetector.onTouchEvent(event);
     }

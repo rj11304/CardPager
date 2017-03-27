@@ -2,6 +2,9 @@ package com.example.cardpager;
 
 import android.app.WallpaperManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -46,7 +49,7 @@ public class CardPageActivity extends FragmentActivity{
     private MeshMenusView meshMenusView;
     private List<CardInfo> infos = new ArrayList<>();
     private CardPagertManager cardPagertManager;
-    private Bitmap emptyBitmap = Bitmap.createBitmap(1,1, Bitmap.Config.RGB_565);
+    private Bitmap emptyBitmap = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_4444);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +73,14 @@ public class CardPageActivity extends FragmentActivity{
         recyclerView.setAdapter(adapter);
         cardPagertManager = new CardPagertManager(getSupportFragmentManager());//卡片管理器
         cardPagertManager.setCallBack(cardpagerManagerCallBack);
+        initEmptyBitmap();
+    }
+
+    private void initEmptyBitmap(){
+        Canvas c = new Canvas(emptyBitmap);
+        Paint p = new Paint();
+        p.setColor(Color.parseColor("#00000000"));
+        c.drawPaint(p);
     }
 
     private List<MenuInfo> getMenuInfo(){
@@ -112,7 +123,7 @@ public class CardPageActivity extends FragmentActivity{
             cardInfo.fragment = fragment;
             cardInfo.bitmap = emptyBitmap;
             cardInfo.UUID = UUID.randomUUID().toString();
-            infos.add(cardInfo);
+            infos.add(1,cardInfo);
             fragment.setCardInfo(cardInfo);
             cardPagertManager.addFragment(fragment);
         }
@@ -127,7 +138,7 @@ public class CardPageActivity extends FragmentActivity{
             cardInfo.fragment = fragment;
             cardInfo.bitmap = emptyBitmap;
             cardInfo.UUID = UUID.randomUUID().toString();
-            infos.add(cardInfo);
+            infos.add(1,cardInfo);
             fragment.setCardInfo(cardInfo);
             cardPagertManager.addFragment(fragment);
         }
@@ -142,7 +153,7 @@ public class CardPageActivity extends FragmentActivity{
             cardInfo.fragment = fragment;
             cardInfo.bitmap = emptyBitmap;
             cardInfo.UUID = UUID.randomUUID().toString();
-            infos.add(cardInfo);
+            infos.add(1,cardInfo);
             fragment.setCardInfo(cardInfo);
             cardPagertManager.addFragment(fragment);
         }
@@ -157,7 +168,7 @@ public class CardPageActivity extends FragmentActivity{
             cardInfo.fragment = fragment;
             cardInfo.bitmap = emptyBitmap;
             cardInfo.UUID = UUID.randomUUID().toString();
-            infos.add(cardInfo);
+            infos.add(1,cardInfo);
             fragment.setCardInfo(cardInfo);
             cardPagertManager.addFragment(fragment);
         }
@@ -174,7 +185,10 @@ public class CardPageActivity extends FragmentActivity{
     private RecyclerViewItemClickHelper.CallBack itemClickcallBack = new RecyclerViewItemClickHelper.CallBack() {
         @Override
         public void onItemClick(RecyclerView parent, RecyclerView.ViewHolder viewHolder, int position) {
+            if(viewHolder.getItemViewType() == 1) return;
             cardPagertManager.openFragment(infos.get(position).fragment);
+            int offset = viewHolder.itemView.getWidth()/2;
+            ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(position,offset);
         }
     };
 
@@ -214,22 +228,21 @@ public class CardPageActivity extends FragmentActivity{
     //fragment事件回调
     private CardPagertManager.CallBack cardpagerManagerCallBack = new CardPagertManager.CallBack() {
         @Override
-        public void showFragment() {
+        public void showFragment(CardBaseFragment fragment) {
             meshMenusView.setVisibility(View.GONE);
             recyclerView.getAdapter().notifyDataSetChanged();
         }
 
         @Override
         public void backhome() {
+            recyclerView.getAdapter().notifyDataSetChanged();
             meshMenusView.setVisibility(View.VISIBLE);
         }
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshCardView(CardPagerEvent event){
-        int position = serch(event.UUID);
         recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scrollToPosition(position);
     }
 
     private int serch(String UUID){

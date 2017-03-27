@@ -4,14 +4,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 /**
- * Created by admin on 2017/3/19.
- * 卡片布局触控回调
+ * Created by admin on 2017/3/27.
  */
-public class CardPagerItemTouchHelperCallback extends ItemTouchHelper.Callback{
-
+public class NotePadItemToucherHelperCallback extends ItemTouchHelper.Callback{
     private DragEvent mEvent;
 
-    public CardPagerItemTouchHelperCallback(DragEvent event){
+    public NotePadItemToucherHelperCallback(DragEvent event){
         this.mEvent = event;
     }
 
@@ -21,31 +19,34 @@ public class CardPagerItemTouchHelperCallback extends ItemTouchHelper.Callback{
     }
 
     @Override
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {//设置支持事件类型
-        if(viewHolder.getItemViewType() == 1){
-            return makeMovementFlags(0,0);
+    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        int dragFlags;
+        int swipFlags;
+        if(viewHolder.getAdapterPosition() == 0){
+            dragFlags = 0;
+            swipFlags = 0;
+        }else{
+            dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            swipFlags = ItemTouchHelper.START | ItemTouchHelper.END;
         }
-        final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-        final int swipFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         return makeMovementFlags(dragFlags,swipFlags);
     }
 
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {//Item交换事件
-        if(viewHolder.getItemViewType() == 1) return false;
+    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        if(target.getAdapterPosition() == 0) return false;
         if(viewHolder.getItemViewType() != target.getItemViewType()) return false;
         mEvent.onItemSwap(viewHolder.getAdapterPosition(),target.getAdapterPosition());
         return true;
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {//Item移除事件
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         mEvent.onItemRemove(viewHolder.getAdapterPosition());
     }
 
     @Override
-    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {//选中Item发生变化
-        if(viewHolder != null && viewHolder.getItemViewType() == 1) return;
+    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         if(actionState != ItemTouchHelper.ACTION_STATE_IDLE){
             if(viewHolder instanceof OnViewHolderStatChanageListener){
                 if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
